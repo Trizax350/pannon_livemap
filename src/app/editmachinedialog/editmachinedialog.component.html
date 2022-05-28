@@ -1,0 +1,37 @@
+<h1 mat-dialog-title>Adatok mentése</h1>
+<div mat-dialog-content>
+    <form [formGroup]="machineForm">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Tag ID</mat-label>
+            <mat-select formControlName="Tag_ID">
+                <mat-option *ngFor="let Tag of TagList" [value]="Tag.Tag_ID">
+                    {{Tag.Tag_ID}} - {{Tag.Name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Cycle time</mat-label>
+            <input matInput formControlName="Cycle_time" type="number" min="0" step="0.001">
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Produced</mat-label>
+            <input matInput formControlName="Produced" type="number" min="0">
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Act product</mat-label>
+            <input matInput formControlName="Act_product" type="number" min="0">
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Status</mat-label>
+            <input matInput formControlName="Status" type="number" min="0">
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Andon</mat-label>
+            <input matInput formControlName="Andon" type="number" min="0">
+        </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions [align]="'end'">
+    <button mat-raised-button color="warn" mat-dialog-close>Mégse</button>
+    <button mat-raised-button color="primary" (click)="addMachineItem()">{{actionBtn}}</button>
+</div>

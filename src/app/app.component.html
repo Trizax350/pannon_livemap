@@ -1,1 +1,28 @@
-<router-outlet></router-outlet>
+<mat-toolbar class="mat-elevation-z8">
+    <button mat-icon-button *ngIf="sidenav.mode === 'over'" (click)="sidenav.toggle()">
+        <mat-icon *ngIf="!sidenav.opened">
+            menu
+        </mat-icon>
+        <mat-icon *ngIf="sidenav.opened">
+            close
+        </mat-icon>
+    </button>
+</mat-toolbar>
+
+<mat-sidenav-container>
+    <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8">
+        <button mat-button class="menu-button" routerLink="/conntagsensor">
+            <mat-icon>assessment</mat-icon>
+            <span>Szenzorok kezelése</span>
+        </button>
+        <button mat-button class="menu-button" routerLink="/machine">
+            <mat-icon>build</mat-icon>
+            <span>Gépek kezelése</span>
+        </button>
+        <button mat-button class="menu-button" routerLink="/livemap">
+            <mat-icon>map</mat-icon>
+            <span>Livemap</span>
+        </button>
+    </mat-sidenav>
+    <router-outlet></router-outlet>
+</mat-sidenav-container>

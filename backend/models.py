@@ -8,6 +8,12 @@ class Tag(Base):
     Tag_ID = Column(Integer, primary_key=True, autoincrement=False)
     Name = Column(String(255))
 
+class Conn_Tag_Sensor(Base):
+    __tablename__='conn_tag_sensor'
+    ID = Column(Integer, primary_key=True, autoincrement=True)
+    Tag_ID = Column(Integer, ForeignKey('tag.Tag_ID'))
+    Sensor = Column(String(255))
+
 class Data(Base):
     __tablename__='data'
     ID = Column(Integer, primary_key=True, autoincrement=True)
