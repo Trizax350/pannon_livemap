@@ -26,27 +26,33 @@ L.Marker.prototype.options.icon = iconDefault;
 })
 
 export class MapComponent implements AfterViewInit, OnInit {
-  private map: any;
+  map: any;
+  marker: any;
+  timer = 1000;
   model: Array<any> = [];
   maplayer = L.layerGroup();
   markers = L.layerGroup();
   zones = L.layerGroup();
-  anchors = L.layerGroup();
+
+  lastUpdateTimeGlobal: any;
+  updateMapVal = 0;
+
   constructor(private http: HttpClient, private MapService: MapService) { }
 
   ngOnInit(): void {
+    L.Icon.Default.imagePath = "../../assets/img/";
     this.getAllTags();
-    setInterval(() => this.getAllTags(), 20000);
+    setInterval(() => this.createMarkers(this.map), this.timer);
   }
 
   ngAfterViewInit(): void {
     this.initMap();
-    this.createMarkers(this.map);
   }
 
   createMarkers(map: L.Map): void {
     var icon = new L.Icon.Default();
     icon.options.shadowSize = [0,0];
+    
     this.MapService.getAllTags().subscribe(data => {
       this.model = data;
       for(const c of data){
@@ -66,8 +72,28 @@ export class MapComponent implements AfterViewInit, OnInit {
         const Produced = c.Machines.Produced;
         const Status = c.Machines.Status;
         const Machine_Time = formatDate(c.Machines.Time, 'yyyy/MM/dd H:m:ss', 'en');
+
+        if(((this.lastUpdateTimeGlobal < Pos_Time) || 
+        (this.lastUpdateTimeGlobal < Data_Time) || 
+        (this.lastUpdateTimeGlobal < Machine_Time) || 
+        (this.lastUpdateTimeGlobal === undefined))){
+          if((Pos_Time > Data_Time) && (Pos_Time > Machine_Time)){
+            this.lastUpdateTimeGlobal = Pos_Time;
+          } else if((Data_Time > Pos_Time) && (Data_Time > Machine_Time)){
+            this.lastUpdateTimeGlobal = Data_Time;
+          } else if((Machine_Time > Pos_Time) && (Machine_Time > Data_Time)){
+            this.lastUpdateTimeGlobal = Machine_Time;
+          }
+
+          this.updateMapVal = 1;
+        }
+
+        if(this.updateMapVal == 1){
+          this.markers.clearLayers();
+          this.updateMapVal = 0;
+        }
         
-        const marker = L.marker([x, y], {icon : icon}).addTo(this.map).bindPopup(
+        this.marker = L.marker([x, y], {icon : icon}).addTo(this.markers).bindPopup(
           "Tag ID: <b>"+Tag_ID+"</b>, X/Y/Z: <b>"+x+" / "+y+" / "+z+"</b>"+
           "<br>Updated: <b>"+Pos_Time+"</b>"+
           "<br><br>Temp: <b>"+Temp+"°C</b>, "+"Noise: <b>"+Noise+"</b>, "+"Vib: <b>"+Vib+"</b>, "+"Steam: <b>"+Steam+"</b>"+
@@ -75,9 +101,6 @@ export class MapComponent implements AfterViewInit, OnInit {
           "<br><br>Act product: <b>"+Act_product+"</b>, "+"Andon: <b>"+Andon+"</b>, "+"Cycle time: <b>"+Cycle_time+"</b>"+"<br>Produced: <b>"+Produced+"</b>, "+"Status: <b>"+Status+"</b>"+
           "<br>Updated: <b>"+Machine_Time+"</b>"
         );
-        
-        marker.addTo(map);
-        this.markers.addLayer(marker);
       }
     });
   }
@@ -85,7 +108,7 @@ export class MapComponent implements AfterViewInit, OnInit {
   getAllTags(){
     this.MapService.getAllTags().subscribe(data => {
       this.model = data;
-      console.log(data);
+      //console.log(data);
     });
   }
 
@@ -96,13 +119,12 @@ export class MapComponent implements AfterViewInit, OnInit {
       "Map": this.maplayer,
       "Markers": this.markers,
       "Zones": this.zones,
-      "Anchors": this.anchors
     };
 
     this.map = L.map('map').setView([0, 0], 2);
+    this.map.invalidateSize(); 
     this.markers.addTo(this.map);
     this.zones.addTo(this.map);
-    this.anchors.addTo(this.map);
 
     const tiles = L.tileLayer('../assets/img/{z}/{x}/{y}.png', {
       minZoom: 2,
@@ -180,94 +202,5 @@ export class MapComponent implements AfterViewInit, OnInit {
     var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
     var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest),this.map.containerPointToLatLng(northEast));
     this.zones.addLayer(L.rectangle(bounds, {color: "grey", weight: 2}).addTo(this.map).bindPopup("5. állomás"));
-
-    //Anchors
-    var latLng = L.latLng(72.8, 55.5);
-    var currentPoint = this.map.latLngToContainerPoint(latLng);
-    var width = 25;
-    var height = 15;
-    var xDifference = width / 2;
-    var yDifference = height / 2;
-    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference));
-    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
-    var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest),this.map.containerPointToLatLng(northEast));
-    this.anchors.addLayer(L.rectangle(bounds, {color: "blue", weight: 2}).addTo(this.map));
-
-    var latLng = L.latLng(10, 73);
-    var currentPoint = this.map.latLngToContainerPoint(latLng);
-    var width = 25;
-    var height = 15;
-    var xDifference = width / 2;
-    var yDifference = height / 2;
-    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference));
-    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
-    var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest),this.map.containerPointToLatLng(northEast));
-    this.anchors.addLayer(L.rectangle(bounds, {color: "blue", weight: 2}).addTo(this.map));
-
-    var latLng = L.latLng(67.5, -8);
-    var currentPoint = this.map.latLngToContainerPoint(latLng);
-    var width = 25;
-    var height = 15;
-    var xDifference = width / 2;
-    var yDifference = height / 2;
-    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference));
-    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
-    var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest),this.map.containerPointToLatLng(northEast));
-    this.anchors.addLayer(L.rectangle(bounds, {color: "blue", weight: 2}).addTo(this.map));
-
-    var latLng = L.latLng(65.5, -72);
-    var currentPoint = this.map.latLngToContainerPoint(latLng);
-    var width = 25;
-    var height = 15;
-    var xDifference = width / 2;
-    var yDifference = height / 2;
-    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference));
-    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
-    var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest),this.map.containerPointToLatLng(northEast));
-    this.anchors.addLayer(L.rectangle(bounds, {color: "blue", weight: 2}).addTo(this.map));
-
-    var latLng = L.latLng(18, -71.5);
-    var currentPoint = this.map.latLngToContainerPoint(latLng);
-    var width = 25;
-    var height = 15;
-    var xDifference = width / 2;
-    var yDifference = height / 2;
-    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference));
-    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
-    var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest),this.map.containerPointToLatLng(northEast));
-    this.anchors.addLayer(L.rectangle(bounds, {color: "blue", weight: 2}).addTo(this.map));
-
-    var latLng = L.latLng(12, -8);
-    var currentPoint = this.map.latLngToContainerPoint(latLng);
-    var width = 25;
-    var height = 15;
-    var xDifference = width / 2;
-    var yDifference = height / 2;
-    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference));
-    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
-    var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest),this.map.containerPointToLatLng(northEast));
-    this.anchors.addLayer(L.rectangle(bounds, {color: "blue", weight: 2}).addTo(this.map));
-
-    var latLng = L.latLng(-50, -71);
-    var currentPoint = this.map.latLngToContainerPoint(latLng);
-    var width = 25;
-    var height = 15;
-    var xDifference = width / 2;
-    var yDifference = height / 2;
-    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference));
-    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
-    var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest),this.map.containerPointToLatLng(northEast));
-    this.anchors.addLayer(L.rectangle(bounds, {color: "blue", weight: 2}).addTo(this.map));
-
-    var latLng = L.latLng(-55, 23);
-    var currentPoint = this.map.latLngToContainerPoint(latLng);
-    var width = 25;
-    var height = 15;
-    var xDifference = width / 2;
-    var yDifference = height / 2;
-    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference));
-    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
-    var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest),this.map.containerPointToLatLng(northEast));
-    this.anchors.addLayer(L.rectangle(bounds, {color: "blue", weight: 2}).addTo(this.map));
   }
 }
