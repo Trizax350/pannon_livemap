@@ -2,6 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../app.module';
+import { environment } from '../../environments/environment';
+
+const API_URL = environment.production
+  ? `${window.location.protocol}//${window.location.hostname}:${environment.API_PORT}`
+  : `${environment.API_URL}:${environment.API_PORT}`;
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +18,23 @@ export class MapService {
     this.baseUrl = baseUrl ? baseUrl : '';
   }
 
-  getAllTags(): Observable<Array<any>> {
-    let url = this.baseUrl + '/list_all_tag_last_data';
+  getAllTagDataPonton(): Observable<Array<any>> {
+    let url = this.baseUrl + '/get_tag_data_ponton';
+    return this.http.get<any>(url);
+  }
+
+  getAllTagsPonton(): Observable<Array<any>> {
+    let url = this.baseUrl + '/list_all_tag_last_data_ponton';
+    return this.http.get<any>(url);
+  }
+
+  getZonesPonton(): Observable<Array<any>> {
+    let url = this.baseUrl + '/get_zones_ponton';
+    return this.http.get<any>(url);
+  }
+
+  getAssetTrackPonton(): Observable<Array<any>> {
+    let url = this.baseUrl + '/get_asset_track_ponton';
     return this.http.get<any>(url);
   }
 }

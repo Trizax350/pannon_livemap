@@ -24,7 +24,7 @@ export class EditmachinedialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.MachineService.getAllTagID().subscribe((data: any) => {
+    this.MachineService.getAllTagIDPonton().subscribe((data: any) => {
       this.TagList = data;
     })
 

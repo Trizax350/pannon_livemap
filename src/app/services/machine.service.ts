@@ -40,8 +40,8 @@ export class MachineService {
     return this.http.delete<any>(url);
   }
 
-  getAllTagID(){
-    let url = this.baseUrl + '/get_all_tag_id';
+  getAllTagIDPonton(){
+    let url = this.baseUrl + '/get_all_tag_id_ponton';
     return this.http.get<any>(url);
   }
 }

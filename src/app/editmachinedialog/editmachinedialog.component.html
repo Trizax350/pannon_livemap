@@ -4,8 +4,8 @@
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Tag ID</mat-label>
             <mat-select formControlName="Tag_ID">
-                <mat-option *ngFor="let Tag of TagList" [value]="Tag.Tag_ID">
-                    {{Tag.Tag_ID}} - {{Tag.Name}}
+                <mat-option *ngFor="let Tag of TagList" [value]="Tag.tag_id">
+                    {{Tag.tag_id}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
