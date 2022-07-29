@@ -11,7 +11,7 @@ mat-toolbar {
 
 mat-sidenav {
     margin: 16px;
-    width: 250px;
+    width: 280px;
     border-right: none;
     background: #555b61;
     color: white;
@@ -33,6 +33,11 @@ mat-sidenav {
 
 mat-sidenav-container {
     height: calc(100vh - 65px);
+}
+
+.menu-label {
+    width: 100%;
+    font-size: 1rem;
 }
 
 .menu-button {

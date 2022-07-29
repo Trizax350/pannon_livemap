@@ -1,21 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MachineService } from '../services/machine.service';
-import { machine } from './machine.model';
+import { ColorService } from '../services/color.service';
+import { color } from './color.model';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EditmachinedialogComponent } from '../editmachinedialog/editmachinedialog.component';
+import { EditcoloroptionsdialogComponent } from '../editcolordialog/editcolordialog.component';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-machine',
-  templateUrl: './machine.component.html',
-  styleUrls: ['./machine.component.scss']
+  selector: 'app-coloroptions',
+  templateUrl: './coloroptions.component.html',
+  styleUrls: ['./coloroptions.component.scss']
 })
 
-export class MachineComponent implements OnInit {
-  displayedColumns: string[] = ['ID', 'Tag_ID', 'Cycle_time', 'Produced', 'Act_product', 'Status', 'Andon', 'Time', 'Reader_ID', 'Edit', 'Delete'];
+export class ColorComponent implements OnInit {
+  displayedColumns: string[] = ['ID', 'Machine_ID', 'Zone_ID', 'Machine_param', 'Machine_value', 'Type', 'Color', 'Status', 'Edit', 'Delete'];
   dataSource!: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -30,36 +30,36 @@ export class MachineComponent implements OnInit {
   public confirmText: string ="<b>Igen</b>";
   public appendToBody: boolean = false;
 
-  model: Array<machine> = [];
-  constructor(private http: HttpClient, private MachineService: MachineService, private dialog: MatDialog) { }
+  model: Array<color> = [];
+  constructor(private http: HttpClient, private ColorService: ColorService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.getMachine();
+    this.getColor();
   }
 
   openDialog() {
-    this.dialog.open(EditmachinedialogComponent, {
+    this.dialog.open(EditcoloroptionsdialogComponent, {
       width:'30%'
     }).afterClosed().subscribe(val=>{
       if(val==='save'){
-        this.getMachine();
+        this.getColor();
       }
     })
   }
 
-  editMachineItem(row: any){
-    this.dialog.open(EditmachinedialogComponent, {
+  editColorItem(row: any){
+    this.dialog.open(EditcoloroptionsdialogComponent, {
       width: '30%',
       data:row
     }).afterClosed().subscribe(val=>{
       if(val==='update'){
-        this.getMachine();
+        this.getColor();
       }
     })
   }
 
-  getMachine(){
-    this.MachineService.getMachine().subscribe({
+  getColor(){
+    this.ColorService.getColorOptions().subscribe({
         next:(data) => {
         this.dataSource = new MatTableDataSource(data);
         this.dataSource.paginator = this.paginator;
@@ -71,8 +71,8 @@ export class MachineComponent implements OnInit {
     })
   }
 
-  deleteMachineItem(machine: machine){
-    this.MachineService.deleteMachineItem(machine.ID).subscribe({
+  deleteColorItem(color: color){
+    this.ColorService.deleteColorOption(color.ID).subscribe({
       next:() => {
         this.ngOnInit();
         alert("Törlés sikeres.");

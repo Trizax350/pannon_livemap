@@ -7,4 +7,5 @@ export interface machine {
     Status: number;
     Andon: number;
     Time: string;
+    Reader_ID: number;
 }

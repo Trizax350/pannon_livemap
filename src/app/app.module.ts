@@ -14,6 +14,9 @@ import { ConntagsensorComponent } from './conntagsensor/conntagsensor.component'
 import { MapService } from './services/map.service';
 import { ConnTagSensorService } from './services/conn-tag-sensor.service';
 import { MachineService } from './services/machine.service';
+import { AssetService } from './services/asset.service';
+import { ColorService } from './services/color.service';
+import { ProductService } from './services/product.service';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -33,6 +36,11 @@ import { DateAdapter, MatNativeDateModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } f
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AssetComponent } from './asset-track/asset-track.component';
+import { ProductComponent } from './product/product.component';
+import { ColorComponent } from './coloroptions/coloroptions.component';
+import { EditproductdialogComponent } from './editproductdialog/editproductdialog.component';
+import { EditcoloroptionsdialogComponent } from './editcolordialog/editcolordialog.component';
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
@@ -44,7 +52,12 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
     EditmachinedialogComponent,
     EditconntagsensordialogComponent,
     MachineComponent,
-    ConntagsensorComponent
+    ConntagsensorComponent,
+    AssetComponent,
+    ProductComponent,
+    ColorComponent,
+    EditproductdialogComponent,
+    EditcoloroptionsdialogComponent
   ],
   entryComponents: [
     EditconntagsensordialogComponent,
@@ -79,6 +92,9 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
     MapService,
     ConnTagSensorService,
     MachineService,
+    AssetService,
+    ColorService,
+    ProductService,
 
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}},
     { provide: API_BASE_URL, useValue: environment.apiRoot },

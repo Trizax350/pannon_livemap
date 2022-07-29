@@ -1,5 +1,5 @@
 <div class="container" style="margin-top: 15px;">
-    <br><br><h1 style="font-size: 300%; display: inline;">Gépek kezelése</h1>
+    <br><br><h1 style="font-size: 300%; display: inline;">Termékek kezelése</h1>
     <button mat-raised-button color="primary" style="margin-left: 15px; float: right;" (click)="openDialog()">Új adat felvitele</button>
     <mat-form-field appearance="standard">
       <mat-label>Szűrés</mat-label>
@@ -15,38 +15,34 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Tag ID </th>
         <td name="data_td" mat-cell *matCellDef="let row"> {{row.Tag_ID}} </td>
       </ng-container>
-      <ng-container matColumnDef="Cycle_time">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Cycle Time </th>
-        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Cycle_time}} </td>
+      <ng-container matColumnDef="RFID_ID">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> RFID ID </th>
+        <td name="data_td" mat-cell *matCellDef="let row"> {{row.RFID_ID}} </td>
       </ng-container>
-      <ng-container matColumnDef="Produced">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Produced </th>
-        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Produced}} </td>
+      <ng-container matColumnDef="Product_name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Product name </th>
+        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Product_name}} </td>
       </ng-container>
-      <ng-container matColumnDef="Act_product">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Act Product</th>
-        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Act_product}} </td>
+      <ng-container matColumnDef="Product_type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Product type</th>
+        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Product_type}} </td>
       </ng-container>
-      <ng-container matColumnDef="Status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Status </th>
-        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Status}} </td>
+      <ng-container matColumnDef="Delivery_time">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Delivery time </th>
+        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Delivery_time | date: 'yyyy/MM/dd HH:mm:ss'}} </td>
       </ng-container>
-      <ng-container matColumnDef="Andon">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Andon </th>
-        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Andon}} </td>
+      <ng-container matColumnDef="Produced_time">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Produced time </th>
+        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Produced_time | date: 'yyyy/MM/dd HH:mm:ss'}} </td>
       </ng-container>
-      <ng-container matColumnDef="Time">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Time </th>
-        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Time | date: 'yyyy/MM/dd HH:mm:ss'}} </td>
-      </ng-container>
-      <ng-container matColumnDef="Reader_ID">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Reader ID </th>
-        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Reader_ID}} </td>
+      <ng-container matColumnDef="Asset">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align: center;"> Asset </th>
+        <td name="data_td" mat-cell *matCellDef="let row"> {{row.Asset}} </td>
       </ng-container>
       <ng-container matColumnDef="Edit">
         <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Szerkesztés </th>
         <td name="button_td" mat-cell *matCellDef="let row"> 
-          <button mat-raised-button (click)="editMachineItem(row)" color="primary"><mat-icon>edit</mat-icon></button>
+          <button mat-raised-button (click)="editProductItem(row)" color="primary"><mat-icon>edit</mat-icon></button>
         </td>
       </ng-container>
       <ng-container matColumnDef="Delete">
@@ -59,7 +55,7 @@
           [confirmText]="confirmText"
           [cancelText]="cancelText"
           [placement]="placement"
-          (confirm)="deleteMachineItem(row)"
+          (confirm)="deleteProductItem(row)"
           (cancel)="cancelClicked=true" 
           confirmButtonType="danger"
           cancelButtonType="outline-secondary"

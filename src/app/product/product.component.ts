@@ -1,21 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MachineService } from '../services/machine.service';
-import { machine } from './machine.model';
+import { ProductService } from '../services/product.service';
+import { product } from './product.model';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EditmachinedialogComponent } from '../editmachinedialog/editmachinedialog.component';
+import { EditproductdialogComponent } from '../editproductdialog/editproductdialog.component';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-machine',
-  templateUrl: './machine.component.html',
-  styleUrls: ['./machine.component.scss']
+  selector: 'app-product',
+  templateUrl: './product.component.html',
+  styleUrls: ['./product.component.scss']
 })
-
-export class MachineComponent implements OnInit {
-  displayedColumns: string[] = ['ID', 'Tag_ID', 'Cycle_time', 'Produced', 'Act_product', 'Status', 'Andon', 'Time', 'Reader_ID', 'Edit', 'Delete'];
+export class ProductComponent implements OnInit {
+  displayedColumns: string[] = ['ID', 'Tag_ID', 'RFID_ID', 'Product_name', 'Product_type', 'Delivery_time', 'Produced_time', 'Asset', 'Edit', 'Delete'];
   dataSource!: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -30,36 +29,36 @@ export class MachineComponent implements OnInit {
   public confirmText: string ="<b>Igen</b>";
   public appendToBody: boolean = false;
 
-  model: Array<machine> = [];
-  constructor(private http: HttpClient, private MachineService: MachineService, private dialog: MatDialog) { }
+  model: Array<product> = [];
+  constructor(private http: HttpClient, private ProductService: ProductService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.getMachine();
+    this.getProduct();
   }
 
   openDialog() {
-    this.dialog.open(EditmachinedialogComponent, {
+    this.dialog.open(EditproductdialogComponent, {
       width:'30%'
     }).afterClosed().subscribe(val=>{
       if(val==='save'){
-        this.getMachine();
+        this.getProduct();
       }
     })
   }
 
-  editMachineItem(row: any){
-    this.dialog.open(EditmachinedialogComponent, {
+  editProductItem(row: any){
+    this.dialog.open(EditproductdialogComponent, {
       width: '30%',
       data:row
     }).afterClosed().subscribe(val=>{
       if(val==='update'){
-        this.getMachine();
+        this.getProduct();
       }
     })
   }
 
-  getMachine(){
-    this.MachineService.getMachine().subscribe({
+  getProduct(){
+    this.ProductService.getProduct().subscribe({
         next:(data) => {
         this.dataSource = new MatTableDataSource(data);
         this.dataSource.paginator = this.paginator;
@@ -71,8 +70,8 @@ export class MachineComponent implements OnInit {
     })
   }
 
-  deleteMachineItem(machine: machine){
-    this.MachineService.deleteMachineItem(machine.ID).subscribe({
+  deleteProductItem(product: product){
+    this.ProductService.deleteProduct(product.ID).subscribe({
       next:() => {
         this.ngOnInit();
         alert("Törlés sikeres.");

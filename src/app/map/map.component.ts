@@ -34,8 +34,10 @@ export class MapComponent implements AfterViewInit, OnInit {
   markers = L.layerGroup();
   zonelayer = L.layerGroup();
   zones: Array<any> = [];
+  colorz: Array<any> = [];
+  machines: Array<any> = [];
 
-  lastUpdateTimeGlobal: any;
+  lastUpdateTimeGlobal: Date = new Date('2010.01.01');
 
   constructor(private http: HttpClient, private MapService: MapService) { }
 
@@ -63,12 +65,13 @@ export class MapComponent implements AfterViewInit, OnInit {
       this.model = data;
       for(const c of data){
         const Pos_Time = formatDate(c.Tag_loc_processed.ts, 'yyyy/MM/dd H:m:ss', 'en');
-
-        if((this.lastUpdateTimeGlobal < Pos_Time) || 
+        const Pos_Time_Date = new Date(Pos_Time);
+        
+        if((this.lastUpdateTimeGlobal < Pos_Time_Date) || 
         (this.lastUpdateTimeGlobal === undefined)){
-          this.lastUpdateTimeGlobal = Pos_Time;
+          this.lastUpdateTimeGlobal = Pos_Time_Date;
           this.markers.clearLayers();
-          console.log("Updated: "+ this.lastUpdateTimeGlobal);
+          console.log("TagPos updated: "+ this.lastUpdateTimeGlobal);
         }
       }
 
@@ -85,11 +88,41 @@ export class MapComponent implements AfterViewInit, OnInit {
         const z = splitted[2];
         
         const Pos_Time = formatDate(c.Tag_loc_processed.ts, 'yyyy/MM/dd H:m:ss', 'en');
+      
+        this.MapService.getTagDataByID(Tag_ID).subscribe(tagdata => {
+          this.model = tagdata;
 
-        this.marker = L.marker([x, y], {icon : icon}).addTo(this.markers).bindPopup(
-          "Tag ID: <b>"+Tag_ID+"</b>, X/Y/Z: <b>"+roundTo(x, 2)+" / "+roundTo(y, 2)+" / "+z+"</b>"+
-          "<br>Updated: <b>"+Pos_Time+"</b>"
-        );
+          const TagDataString = JSON.stringify(tagdata);
+          const TagDataObj = JSON.parse(TagDataString);
+    
+          if(TagDataObj?.Time != undefined){
+            const Data_Time = formatDate(TagDataObj.Time, 'yyyy/MM/dd H:m:ss', 'en');
+            const Data_Time_Date = new Date(Data_Time);
+            
+            if(this.lastUpdateTimeGlobal < Data_Time_Date){
+              this.lastUpdateTimeGlobal = Data_Time_Date;
+              this.markers.clearLayers();
+              console.log("TagData updated: "+ this.lastUpdateTimeGlobal);
+            }
+
+            const Vib = TagDataObj.Vib;
+            const Temp = TagDataObj.Temp;
+            const Steam = TagDataObj.Steam;
+            const Noise = TagDataObj.Noise;
+            const Data_Time_Text = formatDate(TagDataObj.Time, 'yyyy/MM/dd H:m:ss', 'en');
+
+            const popupText = "Tag ID: <b>"+Tag_ID+"</b>, X/Y/Z: <b>"+roundTo(x, 2)+" / "+roundTo(y, 2)+" / "+z+"</b>"+
+            "<br>Pos updated: <b>"+Pos_Time+"</b><br><br>Vib: <b>"+Vib+"</b> Temp: <b>"+Temp+"</b> Steam: <b>"+Steam+"</b> Noise: <b>"+Noise+
+            "</b><br> Sensor updated: <b>"+Data_Time_Text+"</b>"
+
+            this.marker = L.marker([x, y], {icon : icon}).addTo(this.markers).bindPopup(popupText);
+          } else {
+            const popupText = "Tag ID: <b>"+Tag_ID+"</b>, X/Y/Z: <b>"+roundTo(x, 2)+" / "+roundTo(y, 2)+" / "+z+"</b>"+
+            "<br>Pos updated: <b>"+Pos_Time+"</b><br><br>No sensor datas"
+
+            this.marker = L.marker([x, y], {icon : icon}).addTo(this.markers).bindPopup(popupText);
+          }
+        });
       }
     });
   }
@@ -136,15 +169,108 @@ export class MapComponent implements AfterViewInit, OnInit {
     this.MapService.getZonesPonton().subscribe(data => {
       this.model = data;
       for(const c of data){
+        const ID = c.id;
         const Title = c.title;
         const Shape = c.shape;
+
+        let colorval = "grey";
+        this.MapService.getZoneColorByID(ID).subscribe(data => {
+          this.colorz = data;
+
+          const colorzString = JSON.stringify(this.colorz);
+          const colorzObj = JSON.parse(colorzString);
+
+          if(colorzObj?.Machine_ID != undefined){
+            this.MapService.getMachineByID(colorzObj.Machine_ID).subscribe(data => {
+              this.machines = data;
+  
+              const machineString = JSON.stringify(this.machines);
+              const machineObj = JSON.parse(machineString);
+              
+              if(colorzObj.Type == "Greater"){
+                if(colorzObj.Machine_param == "Cycle_time"){
+                  if(colorzObj.Machine_value < machineObj.Cycle_time){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Produced"){
+                  if(colorzObj.Machine_value < machineObj.Produced){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Act_product"){
+                  if(colorzObj.Machine_value < machineObj.Act_product){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Status"){
+                  if(colorzObj.Machine_value < machineObj.Status){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Andon"){
+                  if(colorzObj.Machine_value < machineObj.Andon){
+                    colorval = colorzObj.Color;
+                  }
+                }
+              } else if(colorzObj.Type == "Less"){
+                if(colorzObj.Machine_param == "Cycle_time"){
+                  if(colorzObj.Machine_value > machineObj.Cycle_time){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Produced"){
+                  if(colorzObj.Machine_value > machineObj.Produced){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Act_product"){
+                  if(colorzObj.Machine_value > machineObj.Act_product){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Status"){
+                  if(colorzObj.Machine_value > machineObj.Status){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Andon"){
+                  if(colorzObj.Machine_value > machineObj.Andon){
+                    colorval = colorzObj.Color;
+                  }
+                }
+              } else {
+                if(colorzObj.Machine_param == "Cycle_time"){
+                  if(colorzObj.Machine_value == machineObj.Cycle_time){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Produced"){
+                  if(colorzObj.Machine_value == machineObj.Produced){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Act_product"){
+                  if(colorzObj.Machine_value == machineObj.Act_product){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Status"){
+                  if(colorzObj.Machine_value == machineObj.Status){
+                    colorval = colorzObj.Color;
+                  }
+                } else if(colorzObj.Machine_param == "Andon"){
+                  if(colorzObj.Machine_value == machineObj.Andon){
+                    colorval = colorzObj.Color;
+                  }
+                }
+              }
+
+              var latlngs: [number, number][] = [
+                [-Shape[0].x, Shape[0].y],
+                [-Shape[1].x, Shape[1].y],
+                [-Shape[2].x, Shape[2].y],
+                [-Shape[3].x, Shape[3].y]]
+              this.zonelayer.addLayer(L.polygon(latlngs, {color: colorval}).addTo(this.map).bindTooltip(Title));
+            });
+          }
+        });
 
         var latlngs: [number, number][] = [
           [-Shape[0].x, Shape[0].y],
           [-Shape[1].x, Shape[1].y],
           [-Shape[2].x, Shape[2].y],
           [-Shape[3].x, Shape[3].y]]
-        this.zonelayer.addLayer(L.polygon(latlngs, {color: "grey"}).addTo(this.map).bindTooltip(Title));
+        this.zonelayer.addLayer(L.polygon(latlngs, {color: colorval}).addTo(this.map).bindTooltip(Title));
       }
     });
   }

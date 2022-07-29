@@ -43,6 +43,7 @@ class Machines(Base):
     Status = Column(Integer, nullable=False)
     Andon = Column(Integer, nullable=False)
     Time = Column(DateTime(), default=datetime.now)
+    Reader_ID = Column(Integer, nullable=False)
 
 class Product(Base):
     __tablename__='product'
@@ -54,6 +55,17 @@ class Product(Base):
     Delivery_time = Column(DateTime(), default=datetime.now)
     Produced_time = Column(DateTime(), default=datetime.now)
     Asset = Column(String(255), nullable=False)
+
+class Zone_color(Base):
+    __tablename__='zone_color'
+    ID = Column(Integer, primary_key=True, autoincrement=True)
+    Machine_ID = Column(Integer, nullable=False)
+    Zone_ID = Column(Integer, nullable=False)
+    Machine_param = Column(String(255), nullable=False)
+    Machine_value = Column(Float, nullable=False)
+    Type = Column(String(255), nullable=False)
+    Color = Column(String(255), nullable=False)
+    Status = Column(String(255), nullable=False)
 
 #Ponton tables ---
 class Tag_loc_processed(Base):

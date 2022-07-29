@@ -23,6 +23,11 @@ export class MapService {
     return this.http.get<any>(url);
   }
 
+  getTagDataByID(id: number): Observable<Array<any>> {
+    let url = this.baseUrl + '/get_data_by_id/'+id;
+    return this.http.get<any>(url);
+  }
+
   getAllTagsPonton(): Observable<Array<any>> {
     let url = this.baseUrl + '/list_all_tag_last_data_ponton';
     return this.http.get<any>(url);
@@ -35,6 +40,16 @@ export class MapService {
 
   getAssetTrackPonton(): Observable<Array<any>> {
     let url = this.baseUrl + '/get_asset_track_ponton';
+    return this.http.get<any>(url);
+  }
+
+  getZoneColorByID(id: number): Observable<Array<any>> {
+    let url = this.baseUrl + '/get_zone_color_by_zone_id/'+id;
+    return this.http.get<any>(url);
+  }
+
+  getMachineByID(id: number): Observable<Array<any>> {
+    let url = this.baseUrl + '/get_machine_by_id/'+id;
     return this.http.get<any>(url);
   }
 }

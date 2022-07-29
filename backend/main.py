@@ -3,6 +3,7 @@ from datetime import date, datetime
 from numbers import Real
 from platform import machine
 from re import M
+from turtle import color
 from fastapi import FastAPI, status, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
@@ -76,6 +77,7 @@ class Machines(BaseModel):
     Status: int
     Andon: int
     Time: Optional[datetime]
+    Reader_ID: Optional[int]
 
     class Config:
         orm_mode=True
@@ -89,6 +91,19 @@ class Product(BaseModel):
     Delivery_time: datetime
     Produced_time: datetime
     Asset: str
+
+    class Config:
+        orm_mode=True
+
+class Zone_color(BaseModel):
+    ID: Optional[int]
+    Machine_ID: int
+    Zone_ID: int
+    Machine_param: str
+    Machine_value: float
+    Type: str
+    Color: str
+    Status: str
 
     class Config:
         orm_mode=True
@@ -168,6 +183,13 @@ def create_zone_from_db_record(db_record) -> Zone:
 
     return zone
 
+#Data functions
+#Select by ID
+@app.get('/get_data_by_id/{item_id}', response_model=Data, status_code=status.HTTP_200_OK)
+def get_data_by_id(item_id: int):
+    data = db.query(models.Data).order_by(models.Data.ID.desc()).filter(models.Data.Tag_ID == item_id).first()
+    return data
+
 #Conn_Tag_Sensor functions
 #Select all
 @app.get('/list_all_conn_tag_sensor', response_model=List[Conn_Tag_Sensor], status_code=200)
@@ -238,6 +260,143 @@ def delete_conn_tag_sensor_item_by_id(item_id: int):
     
     return item_to_delete
 
+#Product functions
+#Select all
+@app.get('/list_all_product', response_model=List[Product], status_code=200)
+def list_all_product():
+    products = db.query(models.Product).order_by(models.Product.ID).all()
+    return products
+
+#Select by ID
+@app.get('/get_product_by_id/{item_id}', response_model=Product, status_code=status.HTTP_200_OK)
+def get_product_by_id(item_id: int):
+    product = db.query(models.Product).filter(models.Product.ID == item_id).first()
+    return product
+
+#Insert
+@app.post('/post_product', response_model=Product, status_code=status.HTTP_201_CREATED)
+def add_item_to_products(product: Product):
+    db_product = db.query(models.Product).filter(models.Product.ID == product.ID).first()
+
+    if db_product is not None:
+       raise HTTPException(status_code=400, detail="Hiba: Ez az azonosító már létezik.")
+
+    new_product = models.Product(
+        ID = product.ID,
+        Tag_ID = product.Tag_ID,
+        RFID_ID = product.RFID_ID,
+        Product_name = product.Product_name,
+        Product_type = product.Product_type,
+        Delivery_time = product.Delivery_time,
+        Produced_time = product.Produced_time,
+        Asset = product.Asset
+    )
+
+    db.add(new_product)
+    db.commit()
+
+    return new_product
+
+#Update
+@app.put('/update_product_by_id/{item_id}', response_model=Product, status_code=status.HTTP_200_OK)
+def update_product_by_id(item_id: int, product: Product):
+    item_to_update = db.query(models.Product).filter(models.Product.ID == item_id).first()
+    item_to_update.Tag_ID = product.Tag_ID
+    item_to_update.RFID_ID = product.RFID_ID
+    item_to_update.Product_name = product.Product_name
+    item_to_update.Product_type = product.Product_type
+    item_to_update.Delivery_time = product.Delivery_time
+    item_to_update.Produced_time = product.Produced_time
+    item_to_update.Asset = product.Asset
+
+    db.commit()
+    return item_to_update
+
+#Delete
+@app.delete('/delete_product_by_id/{item_id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_product_by_id(item_id: int):
+    item_to_delete = db.query(models.Product).filter(models.Product.ID == item_id).first()
+
+    if item_to_delete is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hiba: Azonosító nem található.")
+
+    db.delete(item_to_delete)
+    db.commit()
+    
+    return item_to_delete
+
+
+#Color options - functions
+#Select all
+@app.get('/list_all_color_options', response_model=List[Zone_color], status_code=200)
+def list_all_color_options():
+    all_color = db.query(models.Zone_color).order_by(models.Zone_color.ID).all()
+    return all_color
+
+#Select by ID
+@app.get('/get_color_option_by_id/{item_id}', response_model=Zone_color, status_code=status.HTTP_200_OK)
+def get_color_option_by_id(item_id: int):
+    color = db.query(models.Zone_color).filter(models.Zone_color.ID == item_id).first()
+    return color
+
+#Select by Zone_ID
+@app.get('/get_zone_color_by_zone_id/{item_id}', response_model=Zone_color, status_code=status.HTTP_200_OK)
+def get_zone_color_by_zone_id(item_id: int):
+    zone_color = db.query(models.Zone_color).filter(and_(models.Zone_color.Zone_ID == item_id, models.Zone_color.Status == "ACTIVE")).first()
+    return zone_color
+
+#Insert
+@app.post('/post_color_option', response_model=Zone_color, status_code=status.HTTP_201_CREATED)
+def add_item_to_color_options(zone_color: Zone_color):
+    db_zone_color = db.query(models.Zone_color).filter(models.Zone_color.ID == zone_color.ID).first()
+
+    if db_zone_color is not None:
+       raise HTTPException(status_code=400, detail="Hiba: Ez az azonosító már létezik.")
+
+    new_color_option = models.Zone_color(
+        ID = zone_color.ID,
+        Machine_ID = zone_color.Machine_ID,
+        Zone_ID = zone_color.Zone_ID,
+        Machine_param = zone_color.Machine_param,
+        Machine_value = zone_color.Machine_value,
+        Type = zone_color.Type,
+        Color = zone_color.Color,
+        Status = zone_color.Status
+    )
+
+    db.add(new_color_option)
+    db.commit()
+
+    return new_color_option
+
+#Update
+@app.put('/update_color_option_by_id/{item_id}', response_model=Zone_color, status_code=status.HTTP_200_OK)
+def update_zone_color_by_id(item_id: int, zone_color: Zone_color):
+    item_to_update = db.query(models.Zone_color).filter(models.Zone_color.ID == item_id).first()
+    item_to_update.Machine_ID = zone_color.Machine_ID
+    item_to_update.Zone_ID = zone_color.Zone_ID
+    item_to_update.Machine_param = zone_color.Machine_param
+    item_to_update.Machine_value = zone_color.Machine_value
+    item_to_update.Type = zone_color.Type
+    item_to_update.Color = zone_color.Color
+    item_to_update.Status = zone_color.Status
+
+    db.commit()
+    return item_to_update
+
+#Delete
+@app.delete('/delete_color_option_by_id/{item_id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_color_option_by_id(item_id: int):
+    item_to_delete = db.query(models.Zone_color).filter(models.Zone_color.ID == item_id).first()
+
+    if item_to_delete is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hiba: Azonosító nem található.")
+
+    db.delete(item_to_delete)
+    db.commit()
+    
+    return item_to_delete
+
 ##Machines functions
 #Select all
 @app.get('/list_all_machines', response_model=List[Machines], status_code=200)
@@ -267,7 +426,8 @@ def add_item_to_machines(machine: Machines):
         Act_product = machine.Act_product,
         Status = machine.Status,
         Andon = machine.Andon,
-        Time = datetime.now()
+        Time = datetime.now(),
+        Reader_ID = machine.Reader_ID
     )
 
     db.add(new_machine)
@@ -286,6 +446,7 @@ def update_machine_item_by_id(item_id: int, machine: Machines):
     item_to_update.Status = machine.Status
     item_to_update.Andon = machine.Andon
     item_to_update.Time = datetime.now()
+    item_to_update.Reader_ID = machine.Reader_ID
 
     db.commit()
     return item_to_update
@@ -333,6 +494,9 @@ def get_tag_data_ponton():
 #Select all tag last asset track data
 @app.get('/get_asset_track_ponton', status_code=200)
 def get_asset_track_ponton():
-    max_pos_ids_by_tag_id = db2.query(func.max(models.Asset_track.id).label('Pos_Max_ID')).group_by(models.Asset_track.tag_id).subquery('max_pos_ids_by_tag_id')
-    get_tag_datas_ponton = db2.query(models.Asset_track).filter(models.Asset_track.id == max_pos_ids_by_tag_id.c.Pos_Max_ID).all()
-    return get_tag_datas_ponton
+    #max_pos_ids_by_tag_id = db2.query(func.max(models.Asset_track.id).label('Pos_Max_ID')).group_by(models.Asset_track.tag_id).subquery('max_pos_ids_by_tag_id')
+    #get_tag_datas_ponton = db2.query(models.Asset_track).filter(models.Asset_track.id == max_pos_ids_by_tag_id.c.Pos_Max_ID).all()
+    #return get_tag_datas_ponton
+
+    all_asset_track = db2.query(models.Asset_track).order_by(models.Asset_track.id).all()
+    return all_asset_track

@@ -1,0 +1,53 @@
+<h1 mat-dialog-title>Adatok mentése</h1>
+<div mat-dialog-content>
+    <form [formGroup]="colorForm">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Machine ID</mat-label>
+            <mat-select formControlName="Machine_ID">
+                <mat-option *ngFor="let Machine of MachineList" [value]="Machine.ID">
+                    {{Machine.ID}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Zone ID</mat-label>
+            <mat-select formControlName="Zone_ID">
+                <mat-option *ngFor="let Zone of ZoneList" [value]="Zone.id">
+                    {{Zone.title}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Gép paraméter</mat-label>
+            <mat-select formControlName="Machine_param">
+                <mat-option *ngFor="let MachineParam of MachineParam" [value]="MachineParam.value">{{MachineParam.viewValue}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Érték</mat-label>
+            <input matInput formControlName="Machine_value" type="number" min="0" step="0.001">
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Szempont</mat-label>
+            <mat-select formControlName="Type">
+                <mat-option *ngFor="let TypeValues of TypeValues" [value]="TypeValues.value">{{TypeValues.viewValue}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Szín</mat-label>
+            <mat-select formControlName="Color">
+                <mat-option *ngFor="let ColorValues of ColorValues" [value]="ColorValues.value">{{ColorValues.viewValue}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Státusz</mat-label>
+            <mat-select formControlName="Status">
+                <mat-option *ngFor="let StatusValues of StatusValues" [value]="StatusValues.value">{{StatusValues.viewValue}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions [align]="'end'">
+    <button mat-raised-button color="warn" mat-dialog-close>Mégse</button>
+    <button mat-raised-button color="primary" (click)="addColorItem()">{{actionBtn}}</button>
+</div>

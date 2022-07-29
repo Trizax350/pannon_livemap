@@ -35,6 +35,7 @@ export class EditmachinedialogComponent implements OnInit {
         Act_product: ['',Validators.required],
         Status: ['',Validators.required],
         Andon: ['',Validators.required],
+        Reader_ID: [''],
     })
 
     if(this.editData){
@@ -45,6 +46,7 @@ export class EditmachinedialogComponent implements OnInit {
         this.machineForm.controls['Act_product'].setValue(this.editData.Act_product);
         this.machineForm.controls['Status'].setValue(this.editData.Status);
         this.machineForm.controls['Andon'].setValue(this.editData.Andon);
+        this.machineForm.controls['Reader_ID'].setValue(this.editData.Reader_ID);
     }
   }
 
