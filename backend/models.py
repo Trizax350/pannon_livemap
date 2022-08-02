@@ -43,7 +43,7 @@ class Machines(Base):
     Status = Column(Integer, nullable=False)
     Andon = Column(Integer, nullable=False)
     Time = Column(DateTime(), default=datetime.now)
-    Reader_ID = Column(Integer, nullable=True)
+    Reader_ID = Column(Integer, nullable=False)
 
 class Product(Base):
     __tablename__='product'

@@ -77,7 +77,7 @@ class Machines(BaseModel):
     Status: int
     Andon: int
     Time: Optional[datetime]
-    Reader_ID: Optional[int]
+    Reader_ID: int
 
     class Config:
         orm_mode=True

@@ -35,7 +35,7 @@ export class EditmachinedialogComponent implements OnInit {
         Act_product: ['',Validators.required],
         Status: ['',Validators.required],
         Andon: ['',Validators.required],
-        Reader_ID: [''],
+        Reader_ID: ['',Validators.required]
     })
 
     if(this.editData){
