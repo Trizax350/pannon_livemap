@@ -118,7 +118,7 @@ export class MapComponent implements AfterViewInit, OnInit {
             this.marker = L.marker([x, y], {icon : icon}).addTo(this.markers).bindPopup(popupText);
           } else {
             const popupText = "Tag ID: <b>"+Tag_ID+"</b>, X/Y/Z: <b>"+roundTo(x, 2)+" / "+roundTo(y, 2)+" / "+z+"</b>"+
-            "<br>Pos updated: <b>"+Pos_Time+"</b><br><br>No sensor datas"
+            "<br>Pos updated: <b>"+Pos_Time+"</b><br><br>No sensor data"
 
             this.marker = L.marker([x, y], {icon : icon}).addTo(this.markers).bindPopup(popupText);
           }
