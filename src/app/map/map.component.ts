@@ -282,7 +282,7 @@ export class MapComponent implements AfterViewInit, OnInit {
           [-Shape[3].x, Shape[3].y]]
         this.zonelayer.addLayer(L.polygon(latlngs, {
           fillColor: "transparent",
-          weight: 2,
+          weight: 3,
           opacity: 1,
           color: colorval,
           fillOpacity: 1
