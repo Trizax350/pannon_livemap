@@ -29,6 +29,7 @@ export class MapComponent implements AfterViewInit, OnInit {
   map: any;
   marker: any;
   timer = 1000;
+  zoneTimer = 10000;
   model: Array<any> = [];
   maplayer = L.layerGroup();
   markers = L.layerGroup();
@@ -46,6 +47,7 @@ export class MapComponent implements AfterViewInit, OnInit {
     this.getAllTagsPonton();
     this.getZonesPonton();
     setInterval(() => this.createMarkers(this.map), this.timer);
+    setInterval(() => this.createZones(), this.zoneTimer);
   }
 
   ngAfterViewInit(): void {
@@ -164,8 +166,9 @@ export class MapComponent implements AfterViewInit, OnInit {
     this.maplayer.addLayer(tiles.addTo(this.map)).addTo(this.map);
 
     L.control.layers(baseLayer, checkLayers).addTo(this.map);
+  }
 
-    //Zones
+  createZones(): void{
     this.MapService.getZonesPonton().subscribe(data => {
       this.model = data;
       for(const c of data){
