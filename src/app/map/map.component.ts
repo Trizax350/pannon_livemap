@@ -52,6 +52,7 @@ export class MapComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit(): void {
     this.initMap();
+    this.createZones();
   }
 
   createMarkers(map: L.Map): void {
@@ -263,7 +264,7 @@ export class MapComponent implements AfterViewInit, OnInit {
                 [-Shape[1].x, Shape[1].y],
                 [-Shape[2].x, Shape[2].y],
                 [-Shape[3].x, Shape[3].y]]
-              this.zonelayer.addLayer(L.polygon(latlngs, {color: colorval}).addTo(this.map).bindTooltip(Title));
+              this.zonelayer.addLayer(L.polygon(latlngs, {fillColor: colorval, color: colorval}).addTo(this.map).bindTooltip(Title));
             });
           }
         });
@@ -273,7 +274,7 @@ export class MapComponent implements AfterViewInit, OnInit {
           [-Shape[1].x, Shape[1].y],
           [-Shape[2].x, Shape[2].y],
           [-Shape[3].x, Shape[3].y]]
-        this.zonelayer.addLayer(L.polygon(latlngs, {color: colorval}).addTo(this.map).bindTooltip(Title));
+        this.zonelayer.addLayer(L.polygon(latlngs, {fillColor: colorval, color: colorval}).addTo(this.map).bindTooltip(Title));
       }
     });
   }
