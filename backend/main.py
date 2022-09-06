@@ -22,7 +22,7 @@ origins = [
     'http://localhost:4250',
     'http://0.0.0.0:4250',
     'http://0.0.0.0:4200',
-    'http://10.77.1.14:4250',
+    'http://10.77.2.14:4250',
     'http://pannon-livemap.eu.ngrok.io',
     'https://pannon-livemap.eu.ngrok.io'
 ]
