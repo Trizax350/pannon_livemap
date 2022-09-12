@@ -86,7 +86,7 @@ export class MapComponent implements AfterViewInit, OnInit {
 
         var splitted = coordinates.split(" ");
 
-        const x = splitted[0];
+        const x = -splitted[0];
         const y = splitted[1];
         const z = splitted[2];
         
@@ -155,13 +155,12 @@ export class MapComponent implements AfterViewInit, OnInit {
 
     this.map = L.map('map', {
       crs: L.CRS.Simple,
-      minZoom: 0,
-      maxZoom: 5
-    }).setView([0, 0], 1);
+      minZoom: 4,
+    }).setView([0, 0]);
 
-    const imgBounds: L.LatLngExpression = [15, 15];
-    const layoutBounds = L.latLngBounds([-15, -15], imgBounds);
-    var image = L.imageOverlay('../../map.png', layoutBounds).addTo(this.map);
+    const imgBounds: L.LatLngExpression = [18.93, 13.38];
+    const layoutBounds = L.latLngBounds([-18.93, -13.38], imgBounds);
+    var image = L.imageOverlay('../../assets/img/map.PNG', layoutBounds).addTo(this.map);
 
     this.maplayer.addTo(this.map);
     this.markers.addTo(this.map);
@@ -263,10 +262,10 @@ export class MapComponent implements AfterViewInit, OnInit {
               }
 
               var latlngs: [number, number][] = [
-                [Shape[0].x, Shape[0].y],
-                [Shape[1].x, Shape[1].y],
-                [Shape[2].x, Shape[2].y],
-                [Shape[3].x, Shape[3].y]]
+                [-Shape[0].x, Shape[0].y],
+                [-Shape[1].x, Shape[1].y],
+                [-Shape[2].x, Shape[2].y],
+                [-Shape[3].x, Shape[3].y]]
               this.zonelayer.addLayer(L.polygon(latlngs, {
                 fillColor: "transparent",
                 weight: 2,
@@ -279,10 +278,10 @@ export class MapComponent implements AfterViewInit, OnInit {
         });
 
         var latlngs: [number, number][] = [
-          [Shape[0].x, Shape[0].y],
-          [Shape[1].x, Shape[1].y],
-          [Shape[2].x, Shape[2].y],
-          [Shape[3].x, Shape[3].y]]
+          [-Shape[0].x, Shape[0].y],
+          [-Shape[1].x, Shape[1].y],
+          [-Shape[2].x, Shape[2].y],
+          [-Shape[3].x, Shape[3].y]]
         this.zonelayer.addLayer(L.polygon(latlngs, {
           fillColor: "transparent",
           weight: 3,
