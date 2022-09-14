@@ -155,11 +155,15 @@ export class MapComponent implements AfterViewInit, OnInit {
 
     this.map = L.map('map', {
       crs: L.CRS.Simple,
-      minZoom: 4,
+      minZoom: 5,
+      maxZoom: 7,
     }).setView([0, 0]);
 
-    const imgBounds: L.LatLngExpression = [18.93, 13.38];
-    const layoutBounds = L.latLngBounds([-18.93, -13.38], imgBounds);
+    const xOffset = 11.3;
+    const yOffset = 9;
+
+    const imgBounds: L.LatLngExpression = [xOffset - 18.93, yOffset - 13.38];
+    const layoutBounds = L.latLngBounds([xOffset, yOffset], imgBounds);
     var image = L.imageOverlay('../../assets/img/map.PNG', layoutBounds).addTo(this.map);
 
     this.maplayer.addTo(this.map);
