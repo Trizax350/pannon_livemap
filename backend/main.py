@@ -18,15 +18,15 @@ from geoalchemy2.functions import GenericFunction
 app=FastAPI()
 
 origins = [
-    'http://localhost:4250',
     'http://0.0.0.0:4250',
     'http://192.168.88.10:4250',
     'http://10.77.2.14:4250',
+    'http://localhost:4250',
 
-    'https://localhost:4250',
     'https://0.0.0.0:4250',
     'https://192.168.88.10:4250',
-    'https://10.77.2.14:4250'
+    'https://10.77.2.14:4250',
+    'https://localhost:4250'
 ]
 
 app.add_middleware(
