@@ -16,14 +16,38 @@ from starlette.middleware.cors import CORSMiddleware
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction
 
+origins = [
+    "http://localhost:4250",
+    "http://10.77.2.14:4250",
+    "http://192.168.88.10:4250"
+]
+
+methods = [
+    "GET",
+    "HEAD",
+    "POST",
+    "PUT",
+    "DELETE",
+    "CONNECT",
+    "OPTIONS",
+    "TRACE",
+    "PATCH"
+]
+
 middleware = [
     Middleware(
         CORSMiddleware,
-        allow_origins=['*'],
+        allow_origins=origins,
         allow_credentials=True,
-        allow_methods=['*'],
+        allow_methods=methods,
         allow_headers=['*']
     )
+]
+
+
+
+middleware = [
+    Middleware(CORSMiddleware, allow_origins=origins)
 ]
 
 app = FastAPI(middleware=middleware)
