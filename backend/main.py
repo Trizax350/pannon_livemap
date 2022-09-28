@@ -11,18 +11,22 @@ from database import SessionLocal, SessionLocal2
 from sqlalchemy.sql import func, literal
 from sqlalchemy import desc, and_, text
 import models
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction
 
-app=FastAPI()
+middleware = [
+    Middleware(
+        CORSMiddleware,
+        allow_origins=['*'],
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=['*']
+    )
+]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins = ["*"],
-    allow_methods = ["*"],
-    allow_headers = ["*"]
-)
+app = FastAPI(middleware=middleware)
 
 #PLivemap tables ---
 class Conn_Tag_Sensor(BaseModel):
