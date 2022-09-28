@@ -1,53 +1,22 @@
-from ast import Str
-from datetime import date, datetime
-from numbers import Real
-from platform import machine
-from re import M
-from turtle import color
+from datetime import datetime
 from fastapi import FastAPI, status, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
 from database import SessionLocal, SessionLocal2
-from sqlalchemy.sql import func, literal
-from sqlalchemy import desc, and_, text
+from sqlalchemy.sql import func
+from sqlalchemy import and_, text
 import models
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
-from geoalchemy2 import Geometry
-from geoalchemy2.functions import GenericFunction
-
-origins = [
-    "http://localhost:4250",
-    "http://10.77.2.14:4250",
-    "http://192.168.88.10:4250"
-]
-
-methods = [
-    "GET",
-    "HEAD",
-    "POST",
-    "PUT",
-    "DELETE",
-    "CONNECT",
-    "OPTIONS",
-    "TRACE",
-    "PATCH"
-]
 
 middleware = [
     Middleware(
         CORSMiddleware,
-        allow_origins=origins,
+        allow_origins=['*', 'http://127.0.0.1:4250', 'http://localhost:4250/conntagsensor'],
         allow_credentials=True,
-        allow_methods=methods,
+        allow_methods=['*'],
         allow_headers=['*']
     )
-]
-
-
-
-middleware = [
-    Middleware(CORSMiddleware, allow_origins=origins)
 ]
 
 app = FastAPI(middleware=middleware)
